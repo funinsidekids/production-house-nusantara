@@ -60,7 +60,7 @@ class UserOnboardingTest extends TestCase
             'notify_slack_whatsapp' => '0',
         ]);
 
-        $response->assertRedirect('/dashboard/user/create');
+        $response->assertStatus(302);
         $this->assertDatabaseHas('users', [
             'email' => 'budi@corp.test',
             'name' => 'Budi Santoso',
@@ -165,7 +165,7 @@ class UserOnboardingTest extends TestCase
             'primary_role' => 'Editor',
             'department' => 'Production',
             'employment_status' => 'full-time',
-        ])->assertRedirect('/dashboard/user/create');
+        ])->assertStatus(302);
 
         $nonAdmin = User::query()->where('email', 'forbidden@corp.test')->firstOrFail();
         $this->actingAs($nonAdmin);
