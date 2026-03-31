@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "name": "PHN Directus Mapping",
+    "version": "2026-03-20",
+    "target_engine": "directus"
+  },
+  "collections": {
+    "landing_settings": {
+      "dashboard_setting_key": "cms_directus_collection",
+      "default_collection_name": "landing_content",
+      "primary_field": "key",
+      "project_field": "project",
+      "fields": {
+        "key": "key",
+        "value": "value"
+      }
+    },
+    "hero_slides": {
+      "dashboard_setting_key": "cms_directus_slides_collection",
+      "default_collection_name": "hero_slides",
+      "primary_field": "local_id",
+      "project_field": "project",
+      "fields": {
+        "id": "local_id",
+        "title": "title",
+        "caption": "caption",
+        "video_url": "video_url",
+        "cta_text": "cta_text",
+        "cta_url": "cta_url",
+        "sort_order": "sort_order",
+        "duration_seconds": "duration_seconds",
+        "overlay_opacity": "overlay_opacity",
+        "is_active": "is_active"
+      }
+    }
+  },
+  "notes": [
+    "Sinkronisasi push/pull berjalan per collection berdasarkan konfigurasi di Dashboard > Website CMS > General.",
+    "Gunakan nilai project jika 1 instance Directus dipakai untuk multi brand/project."
+  ]
+}

@@ -1,0 +1,299 @@
+{
+  "version": 1,
+  "directus": "11.5.0",
+  "vendor": "production-house-nusantara",
+  "collections": [
+    {
+      "collection": "landing_content",
+      "meta": {
+        "accountability": "all",
+        "archive_app_filter": true,
+        "archive_field": null,
+        "archive_value": null,
+        "collapse": "open",
+        "collection": "landing_content",
+        "color": "#6644FF",
+        "display_template": "{{key}}",
+        "group": null,
+        "hidden": false,
+        "icon": "settings",
+        "item_duplication_fields": null,
+        "note": "Sinkronisasi key/value landing settings dari dashboard Laravel.",
+        "singleton": false,
+        "sort": 1,
+        "sort_field": null,
+        "translations": null,
+        "unarchive_value": null
+      },
+      "schema": {
+        "name": "landing_content"
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "meta": {
+        "accountability": "all",
+        "archive_app_filter": true,
+        "archive_field": null,
+        "archive_value": null,
+        "collapse": "open",
+        "collection": "hero_slides",
+        "color": "#00A98F",
+        "display_template": "{{title}}",
+        "group": null,
+        "hidden": false,
+        "icon": "slideshow",
+        "item_duplication_fields": null,
+        "note": "Sinkronisasi data hero slides dari dashboard Laravel.",
+        "singleton": false,
+        "sort": 2,
+        "sort_field": "sort_order",
+        "translations": null,
+        "unarchive_value": null
+      },
+      "schema": {
+        "name": "hero_slides"
+      }
+    }
+  ],
+  "fields": [
+    {
+      "collection": "landing_content",
+      "field": "id",
+      "type": "integer",
+      "schema": {
+        "is_primary_key": true,
+        "has_auto_increment": true,
+        "is_nullable": false
+      },
+      "meta": {
+        "hidden": true,
+        "readonly": true,
+        "interface": "input",
+        "special": [
+          "auto-increment"
+        ],
+        "sort": 1
+      }
+    },
+    {
+      "collection": "landing_content",
+      "field": "project",
+      "type": "string",
+      "schema": {
+        "max_length": 120,
+        "is_nullable": true
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "note": "Opsional, isi jika multi project dalam satu Directus.",
+        "sort": 2
+      }
+    },
+    {
+      "collection": "landing_content",
+      "field": "key",
+      "type": "string",
+      "schema": {
+        "max_length": 191,
+        "is_nullable": false,
+        "is_unique": true
+      },
+      "meta": {
+        "interface": "input",
+        "display": "raw",
+        "required": true,
+        "sort": 3
+      }
+    },
+    {
+      "collection": "landing_content",
+      "field": "value",
+      "type": "text",
+      "schema": {
+        "is_nullable": true
+      },
+      "meta": {
+        "interface": "input-multiline",
+        "display": "formatted-value",
+        "sort": 4
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "id",
+      "type": "integer",
+      "schema": {
+        "is_primary_key": true,
+        "has_auto_increment": true,
+        "is_nullable": false
+      },
+      "meta": {
+        "hidden": true,
+        "readonly": true,
+        "interface": "input",
+        "special": [
+          "auto-increment"
+        ],
+        "sort": 1
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "project",
+      "type": "string",
+      "schema": {
+        "max_length": 120,
+        "is_nullable": true
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "note": "Opsional, isi jika multi project dalam satu Directus.",
+        "sort": 2
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "local_id",
+      "type": "integer",
+      "schema": {
+        "is_nullable": false,
+        "is_unique": true
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "required": true,
+        "sort": 3
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "title",
+      "type": "string",
+      "schema": {
+        "max_length": 255,
+        "is_nullable": false
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "required": true,
+        "sort": 4
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "caption",
+      "type": "text",
+      "schema": {
+        "is_nullable": true
+      },
+      "meta": {
+        "interface": "input-multiline",
+        "display": "formatted-value",
+        "sort": 5
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "video_url",
+      "type": "text",
+      "schema": {
+        "is_nullable": true
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "sort": 6
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "cta_text",
+      "type": "string",
+      "schema": {
+        "max_length": 255,
+        "is_nullable": true
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "sort": 7
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "cta_url",
+      "type": "text",
+      "schema": {
+        "is_nullable": true
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "sort": 8
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "sort_order",
+      "type": "integer",
+      "schema": {
+        "is_nullable": false,
+        "default_value": 0
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "required": true,
+        "sort": 9
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "duration_seconds",
+      "type": "integer",
+      "schema": {
+        "is_nullable": true,
+        "default_value": 0
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "sort": 10
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "overlay_opacity",
+      "type": "float",
+      "schema": {
+        "is_nullable": true,
+        "default_value": 0.78
+      },
+      "meta": {
+        "interface": "input",
+        "display": "formatted-value",
+        "sort": 11
+      }
+    },
+    {
+      "collection": "hero_slides",
+      "field": "is_active",
+      "type": "boolean",
+      "schema": {
+        "is_nullable": false,
+        "default_value": true
+      },
+      "meta": {
+        "interface": "boolean",
+        "display": "boolean",
+        "sort": 12
+      }
+    }
+  ],
+  "relations": []
+}

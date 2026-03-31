@@ -1,0 +1,110 @@
+{
+  "menu": [
+    {
+      "url": "/dashboard",
+      "name": "Dashboard",
+      "icon": "menu-icon icon-base bx bx-home-smile",
+      "slug": "dashboard-analytics"
+    },
+    {
+      "menuHeader": "Website CMS"
+    },
+    {
+      "name": "WEBSITE CMS",
+      "icon": "menu-icon icon-base bx bx-globe",
+      "slug": "dashboard-website-cms",
+      "submenu": [
+        {
+          "url": "/dashboard/website-cms/general",
+          "name": "General",
+          "slug": "dashboard-website-cms-general"
+        },
+        {
+          "url": "/dashboard/website-cms/logo",
+          "name": "Logo",
+          "slug": "dashboard-website-cms-logo"
+        },
+        {
+          "url": "/dashboard/website-cms/header",
+          "name": "Header",
+          "slug": "dashboard-website-cms-header"
+        },
+        {
+          "url": "/dashboard/website-cms/slider-video",
+          "name": "Slider Video",
+          "slug": "dashboard-website-cms-slider-video"
+        },
+        {
+          "url": "/dashboard/website-cms/pages",
+          "name": "Pages",
+          "slug": "dashboard-website-cms-pages"
+        },
+        {
+          "url": "/dashboard/website-cms/portfolio",
+          "name": "Portfolio",
+          "slug": "dashboard-website-cms-portfolio"
+        },
+        {
+          "url": "/dashboard/website-cms/blog-news",
+          "name": "Blog / News",
+          "slug": "dashboard-website-cms-blog-news"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Operational"
+    },
+    {
+      "name": "STORE",
+      "icon": "menu-icon icon-base bx bx-store-alt",
+      "slug": "dashboard-store",
+      "submenu": [
+        {
+          "url": "/dashboard/store/product",
+          "name": "Product",
+          "slug": "dashboard-store-product"
+        },
+        {
+          "url": "/dashboard/store/orders",
+          "name": "Orders",
+          "slug": "dashboard-store-order"
+        }
+      ]
+    },
+    {
+      "name": "USER",
+      "icon": "menu-icon icon-base bx bx-user",
+      "slug": "dashboard-user",
+      "submenu": [
+        {
+          "url": "/dashboard/user",
+          "name": "Management",
+          "slug": "dashboard-user-management"
+        },
+        {
+          "url": "/dashboard/user/create",
+          "name": "Create User",
+          "slug": "dashboard-user-create"
+        },
+        {
+          "url": "/dashboard/user/role",
+          "name": "Role",
+          "slug": "dashboard-user-role"
+        }
+      ]
+    },
+    {
+      "url": "/",
+      "name": "Landing Page",
+      "icon": "menu-icon icon-base bx bx-world",
+      "slug": "home"
+    },
+    {
+      "url": "/api/admin/dashboard",
+      "name": "Dashboard API",
+      "icon": "menu-icon icon-base bx bx-data",
+      "slug": "api-dashboard",
+      "target": "_blank"
+    }
+  ]
+}
