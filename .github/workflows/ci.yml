@@ -29,6 +29,12 @@ jobs:
           php-version: '8.4'
           coverage: none
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
       - name: Cache Composer
         uses: actions/cache@v4
         with:
@@ -39,6 +45,12 @@ jobs:
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Install Node dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build frontend assets
+        run: npm run build
 
       - name: Prepare environment
         run: |
