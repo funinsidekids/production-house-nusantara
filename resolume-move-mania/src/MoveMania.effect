@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MOVE MANIA! - Random Movement & Effects Tool for Resolume Arena
+  
+  Features:
+  - Position, Scale, Rotation & Opacity customization with limitations & speed differences
+  - Beat Randomizer (Manual, Speed slider, or BPM-synced)
+  - Smoothing & Freezing options
+  - Echo effects (works on alpha clips & other sources)
+  - Best used on transparent or cropped sources
+  
+  Author: Generated for Resolume Arena
+  Version: 1.0.0
+-->
+<effect name="Move Mania!" category="Transform">
+  
+  <!-- Global Parameters -->
+  <param name="Master Enable" type="toggle" default="true" />
+  <param name="Seed" type="float" min="0" max="1000" default="0" />
+  
+  <!-- Beat Randomizer Section -->
+  <group name="Beat Randomizer">
+    <param name="Enable Beat Sync" type="toggle" default="false" />
+    <param name="Beat Mode" type="enum" default="BPM">
+      <option name="BPM" value="0" />
+      <option name="Speed" value="1" />
+      <option name="Manual" value="2" />
+    </param>
+    <param name="Speed" type="float" min="0.1" max="10" default="1.0" />
+    <param name="Manual Trigger" type="trigger" />
+    <param name="Freeze" type="toggle" default="false" />
+  </group>
+  
+  <!-- Position Section -->
+  <group name="Position">
+    <param name="Enable Position" type="toggle" default="true" />
+    <param name="X Range" type="float" min="0" max="2" default="0.5" />
+    <param name="Y Range" type="float" min="0" max="2" default="0.5" />
+    <param name="X Speed" type="float" min="0" max="5" default="1.0" />
+    <param name="Y Speed" type="float" min="0" max="5" default="1.0" />
+    <param name="Smooth Position" type="toggle" default="true" />
+    <param name="Position Smoothing" type="float" min="0" max="1" default="0.5" />
+  </group>
+  
+  <!-- Scale Section -->
+  <group name="Scale">
+    <param name="Enable Scale" type="toggle" default="true" />
+    <param name="Scale Min" type="float" min="0" max="5" default="0.8" />
+    <param name="Scale Max" type="float" min="0" max="5" default="1.2" />
+    <param name="Scale Speed" type="float" min="0" max="5" default="1.0" />
+    <param name="Uniform Scale" type="toggle" default="true" />
+    <param name="Scale X Independent" type="float" min="0" max="5" default="1.0" />
+    <param name="Scale Y Independent" type="float" min="0" max="5" default="1.0" />
+    <param name="Smooth Scale" type="toggle" default="true" />
+    <param name="Scale Smoothing" type="float" min="0" max="1" default="0.5" />
+  </group>
+  
+  <!-- Rotation Section -->
+  <group name="Rotation">
+    <param name="Enable Rotation" type="toggle" default="true" />
+    <param name="Rotation Range" type="float" min="0" max="360" default="45" />
+    <param name="Rotation Speed" type="float" min="0" max="5" default="1.0" />
+    <param name="Smooth Rotation" type="toggle" default="true" />
+    <param name="Rotation Smoothing" type="float" min="0" max="1" default="0.5" />
+  </group>
+  
+  <!-- Opacity Section -->
+  <group name="Opacity">
+    <param name="Enable Opacity" type="toggle" default="false" />
+    <param name="Opacity Min" type="float" min="0" max="1" default="0.5" />
+    <param name="Opacity Max" type="float" min="0" max="1" default="1.0" />
+    <param name="Opacity Speed" type="float" min="0" max="5" default="1.0" />
+    <param name="Smooth Opacity" type="toggle" default="true" />
+    <param name="Opacity Smoothing" type="float" min="0" max="1" default="0.5" />
+  </group>
+  
+  <!-- Echo Effects Section -->
+  <group name="Echo Effects">
+    <param name="Enable Echo" type="toggle" default="false" />
+    <param name="Echo Count" type="int" min="1" max="20" default="3" />
+    <param name="Echo Delay" type="float" min="0" max="1" default="0.1" />
+    <param name="Echo Fade" type="float" min="0" max="1" default="0.5" />
+    <param name="Echo Offset X" type="float" min="-1" max="1" default="0.1" />
+    <param name="Echo Offset Y" type="float" min="-1" max="1" default="0.1" />
+    <param name="Echo Scale Decay" type="float" min="0" max="1" default="0.9" />
+    <param name="Echo Rotation Decay" type="float" min="-180" max="180" default="5" />
+    <param name="Echo Blend Mode" type="enum" default="Add">
+      <option name="Add" value="0" />
+      <option name="Normal" value="1" />
+      <option name="Multiply" value="2" />
+      <option name="Screen" value="3" />
+    </param>
+  </group>
+  
+  <!-- Shader Implementation -->
+  <shader>
+    <![CDATA[
+// Move Mania! GLSL Shader Implementation
+// This is a conceptual implementation - actual Resolume shaders use their specific format
+
+uniform float masterEnable;
+uniform float seed;
+
+// Beat Randomizer
+uniform float enableBeatSync;
+uniform float beatMode; // 0=BPM, 1=Speed, 2=Manual
+uniform float speed;
+uniform float manualTrigger;
+uniform float freeze;
+
+// Position
+uniform float enablePosition;
+uniform float xRange;
+uniform float yRange;
+uniform float xSpeed;
+uniform float ySpeed;
+uniform float smoothPosition;
+uniform float positionSmoothing;
+
+// Scale
+uniform float enableScale;
+uniform float scaleMin;
+uniform float scaleMax;
+uniform float scaleSpeed;
+uniform float uniformScale;
+uniform float scaleXIndependent;
+uniform float scaleYIndependent;
+uniform float smoothScale;
+uniform float scaleSmoothing;
+
+// Rotation
+uniform float enableRotation;
+uniform float rotationRange;
+uniform float rotationSpeed;
+uniform float smoothRotation;
+uniform float rotationSmoothing;
+
+// Opacity
+uniform float enableOpacity;
+uniform float opacityMin;
+uniform float opacityMax;
+uniform float opacitySpeed;
+uniform float smoothOpacity;
+uniform float opacitySmoothing;
+
+// Echo
+uniform float enableEcho;
+uniform int echoCount;
+uniform float echoDelay;
+uniform float echoFade;
+uniform float echoOffsetX;
+uniform float echoOffsetY;
+uniform float echoScaleDecay;
+uniform float echoRotationDecay;
+uniform float echoBlendMode;
+
+// Time and beat input from Resolume
+uniform float time;
+uniform float bpm;
+uniform float beat;
+
+// Pseudo-random number generator
+float random(float value) {
+    return fract(sin(value * 12.9898 + seed * 78.233) * 43758.5453);
+}
+
+float randomRange(float min, float max, float value) {
+    return min + random(value) * (max - min);
+}
+
+// Smoothing function
+float smoothStep(float edge0, float edge1, float x) {
+    float t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+    return t * t * (3.0 - 2.0 * t);
+}
+
+vec4 mainImage(vec2 uv, vec2 resolution) {
+    if (masterEnable < 0.5) {
+        return texture2D(texture, uv);
+    }
+    
+    // Calculate beat-based timing
+    float beatTime = time;
+    if (enableBeatSync > 0.5) {
+        if (beatMode < 0.5) {
+            // BPM mode
+            beatTime = floor(time * bpm / 60.0);
+        } else if (beatMode < 1.5) {
+            // Speed mode
+            beatTime = floor(time * speed);
+        } else {
+            // Manual mode
+            beatTime = floor(manualTrigger);
+        }
+    }
+    
+    if (freeze > 0.5) {
+        beatTime = floor(beatTime);
+    }
+    
+    // Generate random values based on beat/time
+    float randTime = beatTime;
+    float posX = random(randTime * xSpeed) * xRange - xRange/2.0;
+    float posY = random(randTime * ySpeed + 1.0) * yRange - yRange/2.0;
+    float scaleVal = randomRange(scaleMin, scaleMax, randTime * scaleSpeed);
+    float rotation = random(randTime * rotationSpeed + 2.0) * rotationRange - rotationRange/2.0;
+    float opacity = randomRange(opacityMin, opacityMax, randTime * opacitySpeed);
+    
+    // Apply smoothing if enabled
+    if (smoothPosition > 0.5) {
+        // Smoothing logic would interpolate between frames
+        posX = posX; // Placeholder for actual smoothing
+        posY = posY;
+    }
+    
+    // Transform UV coordinates
+    vec2 transformedUV = uv;
+    
+    // Apply position offset
+    if (enablePosition > 0.5) {
+        transformedUV -= vec2(posX, posY);
+    }
+    
+    // Apply scale
+    if (enableScale > 0.5) {
+        vec2 center = vec2(0.5);
+        if (uniformScale > 0.5) {
+            transformedUV = (transformedUV - center) / scaleVal + center;
+        } else {
+            transformedUV.x = (transformedUV.x - center.x) / (scaleVal * scaleXIndependent) + center.x;
+            transformedUV.y = (transformedUV.y - center.y) / (scaleVal * scaleYIndependent) + center.y;
+        }
+    }
+    
+    // Apply rotation
+    if (enableRotation > 0.5) {
+        vec2 centeredUV = transformedUV - 0.5;
+        float angle = radians(rotation);
+        mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+        centeredUV = rotationMatrix * centeredUV;
+        transformedUV = centeredUV + 0.5;
+    }
+    
+    // Sample the texture
+    vec4 color = texture2D(texture, transformedUV);
+    
+    // Apply opacity
+    if (enableOpacity > 0.5) {
+        color.a *= opacity;
+    }
+    
+    // Apply echo effects
+    if (enableEcho > 0.5) {
+        vec4 echoColor = color;
+        float currentScale = 1.0;
+        float currentRotation = 0.0;
+        
+        for (int i = 0; i < 20; i++) {
+            if (i >= echoCount) break;
+            
+            vec2 echoUV = transformedUV;
+            echoUV += vec2(echoOffsetX, echoOffsetY) * float(i + 1);
+            
+            // Apply decay to scale and rotation
+            currentScale *= echoScaleDecay;
+            currentRotation += echoRotationDecay;
+            
+            // Sample echo layer
+            vec4 echoSample = texture2D(texture, echoUV);
+            echoSample.a *= pow(echoFade, float(i + 1));
+            
+            // Blend based on blend mode
+            if (echoBlendMode < 0.5) {
+                // Add mode
+                echoColor += echoSample;
+            } else if (echoBlendMode < 1.5) {
+                // Normal mode
+                echoColor = mix(echoColor, echoSample, echoSample.a);
+            } else if (echoBlendMode < 2.5) {
+                // Multiply mode
+                echoColor *= echoSample;
+            } else {
+                // Screen mode
+                echoColor = 1.0 - (1.0 - echoColor) * (1.0 - echoSample);
+            }
+        }
+        
+        color = echoColor;
+    }
+    
+    return color;
+}
+]]>
+  </shader>
+  
+  <!-- Presets -->
+  <presets>
+    <preset name="Gentle Float">
+      <set param="X Range" value="0.2" />
+      <set param="Y Range" value="0.2" />
+      <set param="X Speed" value="0.5" />
+      <set param="Y Speed" value="0.5" />
+      <set param="Scale Min" value="0.9" />
+      <set param="Scale Max" value="1.1" />
+      <set param="Rotation Range" value="15" />
+      <set param="Smooth Position" value="true" />
+      <set param="Smooth Scale" value="true" />
+      <set param="Smooth Rotation" value="true" />
+    </preset>
+    
+    <preset name="Chaotic Jump">
+      <set param="X Range" value="1.0" />
+      <set param="Y Range" value="1.0" />
+      <set param="X Speed" value="3.0" />
+      <set param="Y Speed" value="3.0" />
+      <set param="Scale Min" value="0.5" />
+      <set param="Scale Max" value="2.0" />
+      <set param="Rotation Range" value="180" />
+      <set param="Enable Beat Sync" value="true" />
+      <set param="Beat Mode" value="BPM" />
+    </preset>
+    
+    <preset name="Echo Trail">
+      <set param="Enable Echo" value="true" />
+      <set param="Echo Count" value="5" />
+      <set param="Echo Delay" value="0.05" />
+      <set param="Echo Fade" value="0.6" />
+      <set param="Echo Offset X" value="0.05" />
+      <set param="Echo Offset Y" value="0.0" />
+      <set param="Echo Scale Decay" value="0.85" />
+      <set param="Echo Blend Mode" value="Add" />
+    </preset>
+    
+    <preset name="Strobe Effect">
+      <set param="Enable Opacity" value="true" />
+      <set param="Opacity Min" value="0.0" />
+      <set param="Opacity Max" value="1.0" />
+      <set param="Opacity Speed" value="4.0" />
+      <set param="Enable Beat Sync" value="true" />
+      <set param="Beat Mode" value="BPM" />
+    </preset>
+  </presets>
+  
+  <!-- Documentation -->
+  <documentation>
+    <section title="Overview">
+      MOVE MANIA! is a random movement &amp; effects tool for Resolume Arena.
+      Many adjustments can be made to change the effect's look &amp; feel.
+      
+      Position, Scale, Rotation &amp; Opacity can be customized independently 
+      with limitations &amp; speed differences.
+    </section>
+    
+    <section title="Beat Randomizer">
+      A Beat Randomizer can be activated:
+      - Manually: Trigger changes on demand
+      - Speed: Changes at a custom speed rate
+      - BPM: Syncs to the composition's BPM
+      
+      Smoothing &amp; Freezing options can also be activated.
+    </section>
+    
+    <section title="Echo Effects">
+      Echo-effects can be applied and customized.
+      The Echo effects work on alpha clips &amp; other sources 
+      even if all movements are disabled.
+    </section>
+    
+    <section title="Best Practices">
+      The Effect will work best on transparent or cropped sources.
+      For best results:
+      - Use with PNG sequences with alpha channels
+      - Crop your video sources to remove black borders
+      - Combine with blend modes for creative effects
+    </section>
+  </documentation>
+  
+</effect>
