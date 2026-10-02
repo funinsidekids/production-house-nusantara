@@ -13,6 +13,7 @@ use App\Http\Controllers\Dashboard\WebsiteCmsPagesController;
 use App\Http\Controllers\Dashboard\WebsiteCmsPortfolioController;
 use App\Http\Controllers\Dashboard\WebsiteCmsSliderVideoController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ModulBelajarController;
 use App\Http\Controllers\StoreController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,14 @@ Route::get('/sitemap-blog.xml', [HomeController::class, 'blogSitemap'])->name('b
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('page.privacy-policy');
 Route::get('/terms', [HomeController::class, 'terms'])->name('page.terms');
 Route::get('/pages/{slug}', [HomeController::class, 'customPage'])->name('page.custom');
+
+// Modul Belajar Kelas 12 SMA/MA
+Route::prefix('modul-belajar')->name('modul-belajar.')->group(function (): void {
+    Route::get('/', [ModulBelajarController::class, 'index'])->name('index');
+    Route::post('progress/{materialId}', [ModulBelajarController::class, 'progress'])->name('progress');
+    Route::get('{kode}', [ModulBelajarController::class, 'show'])->name('mapel');
+    Route::get('{kode}/{chapterId}/{materialId}', [ModulBelajarController::class, 'material'])->name('material');
+});
 Route::get('/dashboard', [AnalyticsController::class, 'index'])->name('dashboard-analytics');
 Route::get('/dashboard/website-cms/general', [WebsiteCmsGeneralController::class, 'index'])->name('dashboard-website-cms-general');
 Route::post('/dashboard/website-cms/general', [WebsiteCmsGeneralController::class, 'update'])->name('dashboard-website-cms-general.update');

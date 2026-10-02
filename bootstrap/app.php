@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\EnsureAdminRole;
+use App\Http\Middleware\EnsureSuperAdmin;
+use App\Http\Middleware\EnsureUserIsActive;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin.role' => EnsureAdminRole::class,
+            'superadmin' => EnsureSuperAdmin::class,
+            'active.user' => EnsureUserIsActive::class,
+            'auth.api' => \App\Http\Middleware\AuthenticateApiToken::class,
+            'admin.api' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+        ]);
+        $middleware->web(append: [
+            EnsureUserIsActive::class,
         ]);
         $middleware->preventRequestForgery(except: [
             'store/payment/doku/notify',

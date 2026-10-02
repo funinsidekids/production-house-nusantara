@@ -18,8 +18,8 @@ class EnsureAdminRole
             return redirect()->guest($target);
         }
 
-        $role = (string) (Auth::user()->primary_role ?? '');
-        if (strtolower(trim($role)) !== 'admin') {
+        $role = strtolower(trim((string) (Auth::user()->primary_role ?? '')));
+        if (! in_array($role, ['admin', 'superadmin'], true)) {
             abort(403);
         }
 
