@@ -1,0 +1,2 @@
+# Pastikan /install di dalam public/ memakai index.php (installer fallback)
+DirectoryIndex index.php

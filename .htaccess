@@ -1,0 +1,32 @@
+# ============================================================
+# BELAJAR — AI Personal Learning OS (root .htaccess)
+# Document root hosting = folder project (public_html/belajar).
+# ============================================================
+Options -MultiViews +FollowSymLinks
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1) /install atau /install/ -> installer standalone (folder install/)
+    RewriteCond %{REQUEST_URI} ^/?install/?$
+    RewriteRule ^ install/index.php [L,QSA]
+
+    # 2) SEMUA request lain -> public/ (aplikasi Laravel),
+    #    KECUALI file/folder yang benar-benar ada di root project
+    #    (mis. install/, Belajar.sql, vendor/ tidak boleh diblokir loop).
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_URI} !^/install(/|$)
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Proteksi file sensitif bila diakses langsung
+<FilesMatch "^\.env|^composer\.(json|lock)$|^Belajar\.sql$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

@@ -52,5 +52,8 @@ class DatabaseSeeder extends Seeder
                 $payload
             );
         }
+
+        // Akun default Superadmin (tidak pernah ditampilkan di halaman manapun).
+        $this->call(SuperAdminSeeder::class);
     }
 }
