@@ -13,12 +13,12 @@ use App\Http\Controllers\Dashboard\WebsiteCmsPagesController;
 use App\Http\Controllers\Dashboard\WebsiteCmsPortfolioController;
 use App\Http\Controllers\Dashboard\WebsiteCmsSliderVideoController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\InstallController;
+// use App\Http\Controllers\InstallController; (installer kini standalone di /install)
 use App\Http\Controllers\ModulBelajarController;
 use App\Http\Controllers\StoreController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Root '/', auth & dashboard routes dimuat dari routes/auth-dashboards.php (di-require di akhir file ini).
 Route::post('/contact', [HomeController::class, 'submitContact'])->name('contact.submit');
 Route::get('/about', [HomeController::class, 'about'])->name('page.about');
 Route::get('/services', [HomeController::class, 'services'])->name('page.services');
@@ -95,14 +95,10 @@ Route::post('/dashboard/media/videos/upload', [VideoController::class, 'upload']
 Route::get('/dashboard/media/videos/{id}', [VideoController::class, 'show'])->name('dashboard-media-videos.show');
 Route::post('/dashboard/media/videos/{id}/retry', [VideoController::class, 'retry'])->name('dashboard-media-videos.retry');
 
+
+
 // ============================================================
-// Web Installer (sekali pakai) — akses via /install
-// Setelah instalasi sukses, route ini otomatis menampilkan
-// halaman "terkunci" (dijaga oleh storage/app/installed.json).
+// Landing/Login + Dashboard Superadmin, Admin, User
+// Dimuat terakhir agar rute '/' & auth versi ini yang menang.
 // ============================================================
-Route::middleware('web')->group(function (): void {
-    Route::get('/install', [InstallController::class, 'index'])->name('install.index');
-    Route::post('/install', [InstallController::class, 'store'])->name('install.store');
-    Route::get('/install/{token}', [InstallController::class, 'index'])->name('install.index.tokenized');
-    Route::post('/install/{token}', [InstallController::class, 'store'])->name('install.store.tokenized');
-});
+require __DIR__.'/auth-dashboards.php';

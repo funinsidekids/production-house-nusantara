@@ -85,7 +85,12 @@ if ($done && is_file($ENV_FILE)) {
             if (preg_match('/^DB_DATABASE=/', $ln)) $lines[$i] = 'DB_DATABASE=' . $fixDb;
         }
         @file_put_contents($ENV_FILE, implode("\n", $lines) . "\n");
-        $log[] = 'PERINGATAN: .env terdeteksi memakai kredensial DEFAULT (root@127.0.0.1 tanpa password). Penyebab paling umum: file .env dari project lokal IKUT ter-upload sehingga MENIMPA .env hasil instalasi. Host & nama database dipulihkan dari catatan instalasi. Silakan isi ulang user & password MySQL pada form di bawah lalu klik Install lagi (aman — import akan dilewati jika tabel sudah ada).';
+        // pulihkan juga driver session ke file — kredensial DB saat itu belum valid,
+        // dan SESSION_DRIVER=database dari .env bawaan menyebabkan error 500
+        // "Access denied for user 'root'" pada setiap halaman.
+        $fixed = str_replace(["\nSESSION_DRIVER=database", "\r\nSESSION_DRIVER=database"], "\nSESSION_DRIVER=file", (string) @file_get_contents($ENV_FILE));
+        @file_put_contents($ENV_FILE, $fixed);
+        $log[] = 'PERINGATAN: .env terdeteksi memakai kredensial DEFAULT (root@127.0.0.1 tanpa password). Penyebab paling umum: file .env dari project lokal IKUT ter-upload sehingga MENIMPA .env hasil instalasi. Host & nama database dipulihkan dari catatan instalasi, dan SESSION_DRIVER dipaksa ke "file". Silakan isi ulang user & password MySQL pada form di bawah lalu klik Install lagi (aman — import akan dilewati jika tabel sudah ada).';
         $done = false; // buka kembali form installer
     }
 }
@@ -396,6 +401,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$done) {
         }
         @chmod($ROOT . '/storage', 0775);
         $log[] = 'OK  Folder runtime (storage/framework/*, logs, bootstrap/cache) siap.';
+
+        /* bersihkan cache konfigurasi/route Laravel lama — bila config.php /
+         * routes.php cached berisi kredensial DB atau daftar route basi,
+         * aplikasi akan tetap error/404 meskipun .env & route sudah benar. */
+        foreach (['/bootstrap/cache/config.php', '/bootstrap/cache/routes.php', '/bootstrap/cache/events.php'] as $cf) {
+            if (is_file($ROOT . $cf)) { @unlink($ROOT . $cf); $log[] = 'OK  Cache dibersihkan: ' . $cf; }
+        }
     }
 
     /* 10. tandai selesai + kunci installer */
@@ -467,7 +479,10 @@ function e_(?string $s): string { return htmlspecialchars((string) $s, ENT_QUOTE
         Tanggal: <?= e_($meta['installed_at'] ?? '-') ?>
       </p>
       <p style="margin-top:14px">
-        <a class="btn" href="<?= e_(($meta['app_url'] ?? '/') . '/login') ?>">🚀 Buka Halaman Login</a>
+        <?php $base = rtrim((string) ($meta['app_url'] ?? '/'), '/'); ?>
+        <a class="btn" href="<?= e_($base !== '' ? $base . '/login' : '/login') ?>">🚀 Buka Halaman Login</a>
+        &nbsp;
+        <a class="btn" style="background:#24466b;color:#cfe6ff" href="<?= e_($base !== '' ? $base . '/' : '/') ?>">🏠 Halaman Utama</a>
       </p>
       <p class="small" style="margin-top:16px">
         ⚠️ Demi keamanan, hapus folder <code>install/</code> dari server setelah aplikasi berjalan normal.<br>

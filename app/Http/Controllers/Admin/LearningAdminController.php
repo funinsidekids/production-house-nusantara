@@ -96,4 +96,74 @@ class LearningAdminController extends Controller
 
         return view('admin-learn.students', compact('students'));
     }
+
+    public function updateQuestionStatus(Request $request, int $question): RedirectResponse
+    {
+        $data = $request->validate(['status' => ['required', Rule::in(['draft', 'pending', 'validated', 'published', 'rejected', 'archived'])]]);
+        $affected = DB::table('questions')->where('id', $question)->update($data + ['updated_at' => now()]);
+
+        return $affected ? back()->with('status', 'Status soal diperbarui.') : back()->withErrors(['question' => 'Soal tidak ditemukan.']);
+    }
+
+    public function reviewAiQuestion(Request $request, int $id, string $decision): RedirectResponse
+    {
+        abort_unless(in_array($decision, ['approve', 'reject'], true), 404);
+        $row = DB::table('ai_generated_questions')->where('id', $id)->first();
+        if (! $row) {
+            return back()->withErrors(['ai' => 'Data AI question tidak ditemukan.']);
+        }
+
+        if ($decision === 'approve') {
+            // Publish: jadikan soal resmi (source ai_generated, status published).
+            $q = $row->question_json ?? null;
+            DB::table('ai_generated_questions')->where('id', $id)->update([
+                'review_status' => 'approved',
+                'status' => 'published',
+                'reviewed_by' => optional($request->user())->id,
+                'reviewed_at' => now(),
+                'updated_at' => now(),
+            ]);
+            if (! $row->question_id) {
+                $payload = json_decode((string) $q, true);
+                if (is_array($payload) && ! empty($payload['question'])) {
+                    $newId = DB::table('questions')->insertGetId([
+                        'subject_id' => $row->subject_id ?: null,
+                        'topic_id' => $row->topic_id ?: null,
+                        'grade' => $row->grade ?: 'XII',
+                        'type' => $row->type ?: 'multiple_choice',
+                        'difficulty' => $row->difficulty ?: 'medium',
+                        'question_text' => mb_substr((string) $payload['question'], 0, 6000),
+                        'explanation' => mb_substr((string) ($payload['explanation'] ?? ''), 0, 6000) ?: null,
+                        'source' => 'ai_generated',
+                        'status' => 'published',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    foreach (($payload['options'] ?? []) as $i => $opt) {
+                        DB::table('question_options')->insert([
+                            'question_id' => $newId,
+                            'option_key' => $opt['key'] ?? chr(65 + $i),
+                            'option_text' => (string) ($opt['text'] ?? ''),
+                            'is_correct' => strtoupper((string) ($payload['correct_answer'] ?? '')) === strtoupper($opt['key'] ?? chr(65 + $i)),
+                            'position' => $i + 1,
+                            'created_at' => now(), 'updated_at' => now(),
+                        ]);
+                    }
+                    DB::table('ai_generated_questions')->where('id', $id)->update(['question_id' => $newId]);
+                }
+            }
+
+            return back()->with('status', 'Soal AI disetujui & dipublikasikan.');
+        }
+
+        DB::table('ai_generated_questions')->where('id', $id)->update([
+            'review_status' => 'rejected',
+            'status' => 'rejected',
+            'reviewed_by' => optional($request->user())->id,
+            'reviewed_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('status', 'Soal AI ditolak.');
+    }
 }
