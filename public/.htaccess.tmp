@@ -1,0 +1,26 @@
+# ============================================================
+# TEMPLATE .htaccess — salin isinya ke file .htaccess di
+# DOCUMENT ROOT subdomain belajar.kasirmo.com, yaitu folder:
+#   public_html/belajar/.htaccess
+# (Hanya pakai ini jika /install masih 404/500 setelah upload.)
+# Path di bawah mengasumsikan docroot = folder project
+# (app/, vendor/, public/ berada DI DALAM public_html/belajar).
+# ============================================================
+
+Options -MultiViews -Indexes
+RewriteEngine On
+
+# Jangan pernah serve file sensitif
+RewriteRule ^(\.env|composer\.(json|lock)|Belajar\.sql)$ - [F,L]
+
+# --- FALLBACK INSTALLER (paling atas, jalan lebih dulu) ---
+# https://belajar.kasirmo.com/install      -> form installer
+RewriteCond %{REQUEST_URI} ^/install/?$
+RewriteRule ^ install/index.php [L,QSA]
+# https://belajar.kasirmo.com/install.php  -> halaman diagnosa
+RewriteCond %{REQUEST_URI} ^/install\.php$
+RewriteRule ^ public/install.php [L,QSA]
+
+# --- NORMAL: semua request lain masuk ke Laravel (public/) ---
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]

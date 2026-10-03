@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckInstalled;
 use App\Http\Middleware\EnsureAdminRole;
 use App\Http\Middleware\EnsureSuperAdmin;
 use App\Http\Middleware\EnsureUserIsActive;
@@ -27,6 +28,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->web(append: [
             EnsureUserIsActive::class,
+        ]);
+        // Guard instalasi jalan PALING AWAL (sebelum session/DB middleware)
+        // agar kredensial DB salah tidak menghasilkan stack trace 500.
+        $middleware->prepend([
+            CheckInstalled::class,
         ]);
         $middleware->preventRequestForgery(except: [
             'store/payment/doku/notify',
